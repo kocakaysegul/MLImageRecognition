@@ -45,6 +45,24 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func recognizeımage(image: CIImage) {
         
+        //Request
+        //Handler
+        
+        if let model = try? VNCoreMLModel(for: MobileNetV2().model) {
+            let request = VNCoreMLRequest(model: model) { vnrequest, error in
+                if let results = vnrequest.results as? [VNClassificationObservation] {
+                    if results.count > 0 {
+                        let topResults = results.first
+                        DispatchQueue.main.async {
+                            let confidenceLevel = (topResults?.confidence ?? 0) * 100
+                            self.resultLabel.text = "\(confidenceLevel)% it is \(topResults?.identifier)"
+                        }
+                    }
+                }
+            }
+        }
+        
+        
     }
     
 }
